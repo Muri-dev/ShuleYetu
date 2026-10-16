@@ -89,7 +89,7 @@ export default async function PortalDashboard() {
                 : primaryRole === "headteacher"
                 ? "Academic Dean & Governance • Result verification, timetable oversight & curriculum."
                 : primaryRole === "parent"
-                ? "Guardian Portal • Live presence, academic reports & terminal performance."
+                ? "Guardian Portal • Live presence, academic reports, fee balances & instant online fee clearance."
                 : primaryRole === "non_teaching_staff"
                 ? "Support Staff Portal • Departmental requests, attendance & institutional notices."
                 : "Institutional Operations & Governance • Multi-tenant academy oversight."}
@@ -108,14 +108,19 @@ export default async function PortalDashboard() {
       {primaryRole === "parent" && (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg font-bold text-surface-900">
-              My Enrolled Children
-            </h2>
+            <div>
+              <h2 className="font-display text-lg font-bold text-surface-900">
+                My Enrolled Children &bull; Academic &amp; Financial Summary
+              </h2>
+              <p className="text-xs text-surface-500">
+                Track real-time attendance, published term marks, and settle tuition arrears online.
+              </p>
+            </div>
             <Link
               href="/portal/children"
               className="text-xs font-semibold text-primary-600 hover:text-primary-700 inline-flex items-center gap-1"
             >
-              View Full Profiles <ArrowRight className="w-3.5 h-3.5" />
+              Fee Accounts &amp; Payments <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
@@ -123,54 +128,98 @@ export default async function PortalDashboard() {
             {DEMO_STUDENTS.slice(0, 2).map((child) => (
               <div
                 key={child.id}
-                className="bg-white border border-surface-200 rounded-2xl p-5 shadow-xs hover:border-primary-300 transition-all"
+                className="bg-white border border-surface-200 rounded-2xl p-5 shadow-xs hover:border-primary-300 transition-all flex flex-col justify-between"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-12 h-12 rounded-2xl bg-primary-50 border border-primary-200 text-primary-700 flex items-center justify-center font-bold text-lg">
-                      {child.first_name[0]}
-                      {child.last_name[0]}
+                <div>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-12 h-12 rounded-2xl bg-primary-50 border border-primary-200 text-primary-700 flex items-center justify-center font-bold text-lg">
+                        {child.first_name[0]}
+                        {child.last_name[0]}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-surface-900 text-base">
+                          {child.first_name} {child.middle_name} {child.last_name}
+                        </h3>
+                        <p className="text-xs text-surface-500 font-mono">
+                          {child.admission_number} &bull; {child.stream_name}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className="badge-success text-xs">Active Student</span>
+                      <span
+                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                          child.fee_status === "cleared"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : "bg-rose-100 text-rose-800"
+                        }`}
+                      >
+                        {child.fee_status === "cleared"
+                          ? "✓ Fees Cleared"
+                          : `⚡ Bal: KES ${(child.fee_balance || 0).toLocaleString()}`}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Academic Snapshot */}
+                  <div className="grid grid-cols-3 gap-2 bg-surface-50 p-3 rounded-xl border border-surface-100 text-center text-xs mb-3">
+                    <div>
+                      <span className="text-surface-500 block text-[11px]">Attendance</span>
+                      <span className="font-semibold text-emerald-600">98.4%</span>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-surface-900 text-base">
-                        {child.first_name} {child.middle_name} {child.last_name}
-                      </h3>
-                      <p className="text-xs text-surface-500 font-mono">
-                        {child.admission_number} &bull; {child.stream_name}
-                      </p>
+                      <span className="text-surface-500 block text-[11px]">Term 1 GPA</span>
+                      <span className="font-semibold text-surface-900">3.88 (A)</span>
+                    </div>
+                    <div>
+                      <span className="text-surface-500 block text-[11px]">Standing</span>
+                      <span className="font-semibold text-primary-700">Good</span>
                     </div>
                   </div>
-                  <span className="badge-success text-xs">Active</span>
+
+                  {/* Tuition Balance Alert Box */}
+                  <div className="p-3 rounded-xl border border-surface-200/80 bg-surface-50/50 mb-4 flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <Receipt className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <div>
+                        <span className="text-[11px] text-surface-500 block">Term 1 Tuition</span>
+                        <strong className="text-surface-900">
+                          Paid: KES {(child.amount_paid || 0).toLocaleString()} / {(child.term_tuition || 85000).toLocaleString()}
+                        </strong>
+                      </div>
+                    </div>
+                    {(child.fee_balance || 0) > 0 ? (
+                      <div className="text-right">
+                        <span className="text-[10px] text-rose-600 block font-semibold uppercase">Due Now</span>
+                        <strong className="text-rose-600 font-mono text-xs">
+                          KES {(child.fee_balance || 0).toLocaleString()}
+                        </strong>
+                      </div>
+                    ) : (
+                      <span className="text-emerald-700 font-semibold text-xs inline-flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Cleared
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 bg-surface-50 p-3 rounded-xl border border-surface-100 text-center text-xs mb-4">
-                  <div>
-                    <span className="text-surface-500 block text-[11px]">Attendance</span>
-                    <span className="font-semibold text-surface-900">98.4%</span>
-                  </div>
-                  <div>
-                    <span className="text-surface-500 block text-[11px]">Term 1 GPA</span>
-                    <span className="font-semibold text-emerald-600">3.88 (A)</span>
-                  </div>
-                  <div>
-                    <span className="text-surface-500 block text-[11px]">Class Rank</span>
-                    <span className="font-semibold text-surface-900">3rd of 30</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-center gap-2 pt-2 border-t border-surface-100">
+                  {(child.fee_balance || 0) > 0 ? (
+                    <Link
+                      href="/portal/children"
+                      className="btn-primary text-xs w-full sm:flex-1 justify-center py-2 bg-emerald-600 hover:bg-emerald-700 border-emerald-600 shadow-xs inline-flex items-center gap-1"
+                    >
+                      <CreditCard className="w-3.5 h-3.5" />
+                      Pay Fees (M-Pesa / Card)
+                    </Link>
+                  ) : null}
                   <Link
                     href={`/portal/children`}
-                    className="btn-primary text-xs flex-1 justify-center py-2"
+                    className="btn-secondary text-xs w-full sm:flex-1 justify-center py-2 inline-flex items-center gap-1"
                   >
-                    <FileText className="w-3.5 h-3.5 mr-1.5" />
-                    View Report Cards
-                  </Link>
-                  <Link
-                    href={`/portal/attendance`}
-                    className="btn-secondary text-xs flex-1 justify-center py-2"
-                  >
-                    Attendance Record
+                    <FileText className="w-3.5 h-3.5" />
+                    Children 360&deg; Hub
                   </Link>
                 </div>
               </div>
