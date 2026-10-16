@@ -64,40 +64,79 @@ export default async function PortalDashboard() {
   return (
     <div className="space-y-6">
       {/* Top Greeting & Role Switcher Banner */}
-      <div className="bg-gradient-to-r from-primary-900 via-primary-800 to-surface-900 rounded-3xl p-6 sm:p-8 text-white shadow-sm relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-primary-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-gradient-to-br from-slate-950 via-[#131b4e] to-[#1e2a77] rounded-3xl p-6 sm:p-8 text-white shadow-md border border-primary-900/60 relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-96 h-96 bg-primary-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute left-1/3 bottom-0 w-64 h-64 bg-accent-500/10 rounded-full blur-2xl pointer-events-none" />
+        
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 backdrop-blur-md border border-white/15 text-primary-200">
-                {ROLE_LABELS[primaryRole]}
+            <div className="flex flex-wrap items-center gap-2 mb-2.5">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                {ROLE_LABELS[primaryRole]} View
               </span>
-              <span className="text-xs text-primary-200/80">
-                {currentTerm.name}
+              <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-white/5 border border-white/10 text-indigo-200">
+                {currentTerm.name} &bull; Academic Year 2026
               </span>
             </div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">
               Welcome back, {user.first_name} {user.last_name}
             </h1>
-            <p className="text-primary-200 text-sm mt-1 max-w-xl">
+            <p className="text-indigo-100/90 text-xs sm:text-sm mt-1.5 max-w-2xl leading-relaxed">
               {primaryRole === "teacher"
-                ? "Academic Instruction & Assessment • Real-time marks entry & class roll-call."
+                ? "Academic Instruction & Assessment • Real-time spreadsheet marks entry, class roll-call & teaching requisitions."
                 : primaryRole === "inventory_officer"
-                ? "Warehouse Logistics & Asset Ledger • Consumable stocks, equipment tagging & requisitions."
+                ? "Warehouse Logistics & Asset Ledger • Track consumable stocks, tag fixed equipment & dispatch requisitions."
                 : primaryRole === "accountant"
-                ? "Bursary & Financial Intelligence • Tuition fee collections, arrears & asset valuation."
+                ? "Bursary & Financial Intelligence • Tuition fee collections, arrears auditing & departmental asset valuation."
                 : primaryRole === "headteacher"
-                ? "Academic Dean & Governance • Result verification, timetable oversight & curriculum."
+                ? "Academic Dean & Governance • Result verification, grade standardizations, timetable oversight & curriculum."
                 : primaryRole === "parent"
-                ? "Guardian Portal • Live presence, academic reports, fee balances & instant online fee clearance."
+                ? "Guardian Portal • Live presence, published terminal report cards, fee balances & instant online fee clearance."
                 : primaryRole === "non_teaching_staff"
-                ? "Support Staff Portal • Departmental requests, attendance & institutional notices."
-                : "Institutional Operations & Governance • Multi-tenant academy oversight."}
+                ? "Support Staff Portal • Departmental requests, attendance logs & institutional announcements."
+                : "Institutional Operations & Governance • Multi-tenant academy oversight, student records & system security."}
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <RoleSwitcher currentRole={primaryRole} />
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0">
+            {primaryRole === "parent" && (
+              <Link
+                href="/portal/children"
+                className="btn-primary text-xs py-2 px-3.5 bg-emerald-600 hover:bg-emerald-700 border-emerald-500 shadow-sm font-semibold inline-flex items-center justify-center gap-1.5"
+              >
+                <CreditCard className="w-3.5 h-3.5" />
+                Pay Tuition Online
+              </Link>
+            )}
+            {primaryRole === "teacher" && (
+              <Link
+                href="/portal/assessments/marks"
+                className="btn-primary text-xs py-2 px-3.5 bg-indigo-600 hover:bg-indigo-700 border-indigo-400 shadow-sm font-semibold inline-flex items-center justify-center gap-1.5"
+              >
+                <ClipboardCheck className="w-3.5 h-3.5" />
+                Enter Student Marks
+              </Link>
+            )}
+            {primaryRole === "accountant" && (
+              <Link
+                href="/portal/students"
+                className="btn-primary text-xs py-2 px-3.5 bg-emerald-600 hover:bg-emerald-700 border-emerald-500 shadow-sm font-semibold inline-flex items-center justify-center gap-1.5"
+              >
+                <Receipt className="w-3.5 h-3.5" />
+                Fee Arrears Ledger
+              </Link>
+            )}
+            {primaryRole === "headteacher" && (
+              <Link
+                href="/portal/assessments/results"
+                className="btn-primary text-xs py-2 px-3.5 bg-amber-600 hover:bg-amber-700 border-amber-500 shadow-sm font-semibold inline-flex items-center justify-center gap-1.5"
+              >
+                <ClipboardCheck className="w-3.5 h-3.5" />
+                Review Approvals
+              </Link>
+            )}
+            <RoleSwitcher currentRole={primaryRole} variant="dark" />
           </div>
         </div>
       </div>

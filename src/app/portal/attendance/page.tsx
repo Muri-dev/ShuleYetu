@@ -200,8 +200,8 @@ export default function AttendancePage() {
                   type="text"
                   value={rec.remarks}
                   onChange={(e) => handleRemarksChange(rec.studentId, e.target.value)}
-                  placeholder="Optional incident note or late excuse..."
-                  className="mt-1 text-xs text-surface-600 border border-transparent hover:border-surface-200 focus:border-primary-400 focus:bg-white rounded px-2 py-0.5 w-72 focus:outline-none"
+                  placeholder="Add optional incident remark or late excuse..."
+                  className="mt-1.5 text-xs text-surface-800 bg-surface-50 border border-surface-200 hover:border-surface-300 focus:border-primary-500 focus:bg-white rounded-lg px-2.5 py-1 w-full sm:w-80 focus:outline-none transition-colors"
                 />
               </div>
 
@@ -210,10 +210,10 @@ export default function AttendancePage() {
                 <button
                   type="button"
                   onClick={() => handleStatusChange(rec.studentId, "present")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border ${
                     rec.status === "present"
-                      ? "bg-emerald-600 text-white shadow-xs"
-                      : "bg-surface-100 text-surface-600 hover:bg-surface-200"
+                      ? "bg-emerald-600 text-white border-emerald-700 shadow-xs"
+                      : "bg-surface-50 text-surface-700 border-surface-200 hover:bg-surface-100"
                   }`}
                 >
                   Present
@@ -222,10 +222,10 @@ export default function AttendancePage() {
                 <button
                   type="button"
                   onClick={() => handleStatusChange(rec.studentId, "late")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border ${
                     rec.status === "late"
-                      ? "bg-amber-600 text-white shadow-xs"
-                      : "bg-surface-100 text-surface-600 hover:bg-surface-200"
+                      ? "bg-amber-600 text-white border-amber-700 shadow-xs"
+                      : "bg-surface-50 text-surface-700 border-surface-200 hover:bg-surface-100"
                   }`}
                 >
                   Late
@@ -234,10 +234,10 @@ export default function AttendancePage() {
                 <button
                   type="button"
                   onClick={() => handleStatusChange(rec.studentId, "absent")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border ${
                     rec.status === "absent"
-                      ? "bg-rose-600 text-white shadow-xs"
-                      : "bg-surface-100 text-surface-600 hover:bg-surface-200"
+                      ? "bg-rose-600 text-white border-rose-700 shadow-xs"
+                      : "bg-surface-50 text-surface-700 border-surface-200 hover:bg-surface-100"
                   }`}
                 >
                   Absent
@@ -246,10 +246,10 @@ export default function AttendancePage() {
                 <button
                   type="button"
                   onClick={() => handleStatusChange(rec.studentId, "excused")}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border ${
                     rec.status === "excused"
-                      ? "bg-blue-600 text-white shadow-xs"
-                      : "bg-surface-100 text-surface-600 hover:bg-surface-200"
+                      ? "bg-blue-600 text-white border-blue-700 shadow-xs"
+                      : "bg-surface-50 text-surface-700 border-surface-200 hover:bg-surface-100"
                   }`}
                 >
                   Excused
