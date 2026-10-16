@@ -168,6 +168,11 @@ export interface Student {
   previous_school?: string | null;
   admission_date: string;
   status: 'active' | 'inactive' | 'transferred' | 'graduated' | 'suspended';
+  fee_status?: 'cleared' | 'partial' | 'overdue';
+  term_tuition?: number;
+  amount_paid?: number;
+  fee_balance?: number;
+  last_payment_date?: string;
   created_at: string;
   updated_at: string;
 }

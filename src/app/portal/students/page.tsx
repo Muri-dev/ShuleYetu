@@ -20,6 +20,20 @@ export default function StudentsRegistryPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [classFilter, setClassFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [feeFilter, setFeeFilter] = useState("all");
+  const [userRole, setUserRole] = useState<string>("teacher");
+
+  useState(() => {
+    if (typeof document !== "undefined") {
+      const match = document.cookie.match(/framer_demo_role=([^;]+)/);
+      if (match) {
+        setUserRole(match[1]);
+      }
+    }
+  });
+
+  const canViewFinances = ["super_admin", "school_admin", "accountant"].includes(userRole);
+  const canAdmitStudents = ["super_admin", "school_admin"].includes(userRole);
 
   const filteredStudents = DEMO_STUDENTS.filter((std) => {
     const matchesSearch =
@@ -31,8 +45,9 @@ export default function StudentsRegistryPage() {
       classFilter === "all" || std.class_name.toLowerCase().includes(classFilter.toLowerCase());
 
     const matchesStatus = statusFilter === "all" || std.status === statusFilter;
+    const matchesFee = feeFilter === "all" || std.fee_status === feeFilter;
 
-    return matchesSearch && matchesClass && matchesStatus;
+    return matchesSearch && matchesClass && matchesStatus && (!canViewFinances || matchesFee);
   });
 
   const handleExportCSV = () => {
@@ -48,7 +63,7 @@ export default function StudentsRegistryPage() {
             Student Admissions &amp; Registry
           </h1>
           <p className="text-surface-500 text-sm mt-0.5">
-            Central repository of all enrolled students, biological profiles, and academic allocations.
+            Central repository of enrolled students, biological profiles, and academic allocations.
           </p>
         </div>
 
@@ -61,13 +76,15 @@ export default function StudentsRegistryPage() {
             <Download className="w-4 h-4" />
             Export CSV
           </button>
-          <Link
-            href="/portal/students/admissions"
-            className="btn-primary text-xs inline-flex items-center gap-1.5"
-          >
-            <UserPlus className="w-4 h-4" />
-            Admit New Student
-          </Link>
+          {canAdmitStudents && (
+            <Link
+              href="/portal/students/admissions"
+              className="btn-primary text-xs inline-flex items-center gap-1.5"
+            >
+              <UserPlus className="w-4 h-4" />
+              Admit New Student
+            </Link>
+          )}
         </div>
       </div>
 
@@ -88,7 +105,7 @@ export default function StudentsRegistryPage() {
           <select
             value={classFilter}
             onChange={(e) => setClassFilter(e.target.value)}
-            className="input-field text-xs py-2 w-44"
+            className="input-field text-xs py-2 w-40"
           >
             <option value="all">All Class Levels</option>
             <option value="form 1">Form 1 (Grade 9)</option>
@@ -107,6 +124,19 @@ export default function StudentsRegistryPage() {
             <option value="inactive">Inactive</option>
             <option value="transferred">Transferred</option>
           </select>
+
+          {canViewFinances && (
+            <select
+              value={feeFilter}
+              onChange={(e) => setFeeFilter(e.target.value)}
+              className="input-field text-xs py-2 w-36 border-emerald-300 bg-emerald-50/30 text-emerald-900 font-medium"
+            >
+              <option value="all">All Fee Status</option>
+              <option value="cleared">Cleared (100%)</option>
+              <option value="partial">Partial Balance</option>
+              <option value="overdue">Overdue Arrears</option>
+            </select>
+          )}
         </div>
       </div>
 
@@ -121,6 +151,9 @@ export default function StudentsRegistryPage() {
                 <th className="py-3 px-4 font-semibold">Class &amp; Stream</th>
                 <th className="py-3 px-4 font-semibold">Gender</th>
                 <th className="py-3 px-4 font-semibold">Guardian Contact</th>
+                {canViewFinances && (
+                  <th className="py-3 px-4 font-semibold text-emerald-800">Fee Status &amp; Balance</th>
+                )}
                 <th className="py-3 px-4 font-semibold">Status</th>
                 <th className="py-3 px-4 font-semibold text-right">Actions</th>
               </tr>
@@ -148,6 +181,21 @@ export default function StudentsRegistryPage() {
                     <div className="text-surface-900 font-medium">{std.guardian_name}</div>
                     <div className="text-[11px] font-mono text-surface-500">{std.guardian_phone}</div>
                   </td>
+                  {canViewFinances && (
+                    <td className="py-3 px-4">
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${
+                          std.fee_status === "cleared"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : std.fee_status === "partial"
+                            ? "bg-amber-100 text-amber-800"
+                            : "bg-rose-100 text-rose-800"
+                        }`}
+                      >
+                        {std.fee_status === "cleared" ? "Cleared" : `Bal: KES ${std.fee_balance?.toLocaleString()}`}
+                      </span>
+                    </td>
+                  )}
                   <td className="py-3 px-4">
                     <span className="badge-success text-[11px] capitalize">{std.status}</span>
                   </td>

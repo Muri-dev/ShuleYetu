@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Student } from "@/lib/types";
+import { Student, UserRole } from "@/lib/types";
 import {
   GraduationCap,
   Calendar,
@@ -15,6 +15,10 @@ import {
   Clock,
   Shield,
   Printer,
+  CreditCard,
+  AlertCircle,
+  Receipt,
+  Lock,
 } from "lucide-react";
 
 interface StudentProfileViewProps {
@@ -25,9 +29,11 @@ interface StudentProfileViewProps {
     guardian_phone: string;
   };
   backUrl: string;
+  viewerRole?: UserRole;
 }
 
-export function StudentProfileView({ student, backUrl }: StudentProfileViewProps) {
+export function StudentProfileView({ student, backUrl, viewerRole }: StudentProfileViewProps) {
+  const canViewFinancials = !viewerRole || ["super_admin", "school_admin", "accountant", "parent"].includes(viewerRole);
   return (
     <div className="space-y-6">
       {/* Back button */}
@@ -166,6 +172,93 @@ export function StudentProfileView({ student, backUrl }: StudentProfileViewProps
           </div>
         </div>
       </div>
+
+      {/* Financials & Fee Clearance - Strictly Restricted by Role */}
+      {canViewFinancials ? (
+        <div className="bg-white border border-surface-200 rounded-3xl p-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-100 pb-4 mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
+                <Receipt className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-surface-900 text-sm">
+                  Institutional Fee &amp; Tuition Account
+                </h3>
+                <p className="text-xs text-surface-500">
+                  Official terminal billing status &bull; Managed by Bursary &amp; Accounts
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span
+                className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                  student.fee_status === "cleared"
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                    : student.fee_status === "partial"
+                    ? "bg-amber-50 text-amber-700 border border-amber-200"
+                    : "bg-rose-50 text-rose-700 border border-rose-200"
+                }`}
+              >
+                {student.fee_status === "cleared"
+                  ? "✓ Tuition 100% Cleared"
+                  : student.fee_status === "partial"
+                  ? "⚡ Partial Balance Pending"
+                  : "⚠ Payment Overdue"}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+            <div className="p-3.5 rounded-xl bg-surface-50 border border-surface-100">
+              <span className="text-surface-500 block text-[11px]">Term 1 Billed Tuition</span>
+              <span className="text-base font-bold text-surface-900 mt-0.5 block">
+                KES {(student.term_tuition || 85000).toLocaleString()}
+              </span>
+              <span className="text-[10px] text-surface-400">Standard Boarding &amp; Tuition</span>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-surface-50 border border-surface-100">
+              <span className="text-surface-500 block text-[11px]">Total Paid to Date</span>
+              <span className="text-base font-bold text-emerald-600 mt-0.5 block">
+                KES {(student.amount_paid ?? 85000).toLocaleString()}
+              </span>
+              <span className="text-[10px] text-surface-400">Verified by Bank Slip</span>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-surface-50 border border-surface-100">
+              <span className="text-surface-500 block text-[11px]">Outstanding Arrears</span>
+              <span
+                className={`text-base font-bold mt-0.5 block ${
+                  (student.fee_balance || 0) > 0 ? "text-rose-600" : "text-surface-900"
+                }`}
+              >
+                KES {(student.fee_balance || 0).toLocaleString()}
+              </span>
+              <span className="text-[10px] text-surface-400">
+                {(student.fee_balance || 0) > 0 ? "Due before mid-term exams" : "Zero balance"}
+              </span>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-surface-50 border border-surface-100">
+              <span className="text-surface-500 block text-[11px]">Last Payment Receipt</span>
+              <span className="text-base font-bold text-surface-900 mt-0.5 block font-mono">
+                {student.last_payment_date ? new Date(student.last_payment_date).toLocaleDateString() : "2026-01-10"}
+              </span>
+              <span className="text-[10px] text-primary-600 font-semibold">Receipt #RCT-89410</span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="p-4 rounded-2xl bg-surface-50 border border-surface-200 text-xs text-surface-500 flex items-center justify-between">
+          <span className="flex items-center gap-2">
+            <Lock className="w-4 h-4 text-surface-400" />
+            Student financial balances &amp; tuition receipts are securely sequestered from teaching faculty.
+          </span>
+          <span className="text-[11px] font-medium text-surface-400">Institutional Governance Policy</span>
+        </div>
+      )}
     </div>
   );
 }

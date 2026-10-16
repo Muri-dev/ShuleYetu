@@ -43,7 +43,7 @@ interface SidebarItem {
   href: string;
   icon: React.ElementType;
   roles?: string[];
-  children?: Omit<SidebarItem, "children">[];
+  children?: SidebarItem[];
 }
 
 const sidebarItems: SidebarItem[] = [
@@ -58,21 +58,21 @@ const sidebarItems: SidebarItem[] = [
     icon: BookOpen,
     roles: ["super_admin", "school_admin", "headteacher", "teacher"],
     children: [
-      { label: "Classes", href: "/portal/academics/classes", icon: School },
-      { label: "Subjects", href: "/portal/academics/subjects", icon: BookOpen },
-      { label: "Timetable", href: "/portal/academics/timetable", icon: Calendar },
-      { label: "Academic Years", href: "/portal/academics/years", icon: Calendar },
+      { label: "Classes", href: "/portal/academics/classes", icon: School, roles: ["super_admin", "school_admin", "headteacher", "teacher"] },
+      { label: "Subjects", href: "/portal/academics/subjects", icon: BookOpen, roles: ["super_admin", "school_admin", "headteacher", "teacher"] },
+      { label: "Timetable", href: "/portal/academics/timetable", icon: Calendar, roles: ["super_admin", "school_admin", "headteacher", "teacher"] },
+      { label: "Academic Years", href: "/portal/academics/years", icon: Calendar, roles: ["super_admin", "school_admin", "headteacher"] },
     ],
   },
   {
     label: "Students",
     href: "/portal/students",
     icon: Users,
-    roles: ["super_admin", "school_admin", "headteacher", "teacher"],
+    roles: ["super_admin", "school_admin", "headteacher", "teacher", "accountant"],
     children: [
-      { label: "All Students", href: "/portal/students", icon: Users },
-      { label: "Admissions", href: "/portal/students/admissions", icon: UserCheck },
-      { label: "Enrollments", href: "/portal/students/enrollments", icon: ClipboardList },
+      { label: "All Students", href: "/portal/students", icon: Users, roles: ["super_admin", "school_admin", "headteacher", "teacher", "accountant"] },
+      { label: "Admissions", href: "/portal/students/admissions", icon: UserCheck, roles: ["super_admin", "school_admin"] },
+      { label: "Enrollments", href: "/portal/students/enrollments", icon: ClipboardList, roles: ["super_admin", "school_admin", "headteacher"] },
     ],
   },
   {
@@ -81,9 +81,9 @@ const sidebarItems: SidebarItem[] = [
     icon: ClipboardCheck,
     roles: ["super_admin", "school_admin", "headteacher", "teacher"],
     children: [
-      { label: "Marks Entry", href: "/portal/assessments/marks", icon: ClipboardCheck },
-      { label: "Results", href: "/portal/assessments/results", icon: FileText },
-      { label: "Report Cards", href: "/portal/assessments/reports", icon: FileText },
+      { label: "Marks Entry", href: "/portal/assessments/marks", icon: ClipboardCheck, roles: ["super_admin", "school_admin", "headteacher", "teacher"] },
+      { label: "Results Workflow", href: "/portal/assessments/results", icon: FileText, roles: ["super_admin", "school_admin", "headteacher", "teacher"] },
+      { label: "Report Cards", href: "/portal/assessments/reports", icon: FileText, roles: ["super_admin", "school_admin", "headteacher"] },
     ],
   },
   {
@@ -102,12 +102,12 @@ const sidebarItems: SidebarItem[] = [
     label: "Inventory",
     href: "/portal/inventory",
     icon: Package,
-    roles: ["super_admin", "school_admin", "inventory_officer", "accountant"],
+    roles: ["super_admin", "school_admin", "inventory_officer", "accountant", "teacher", "non_teaching_staff"],
     children: [
-      { label: "Stock Items", href: "/portal/inventory/items", icon: Package },
-      { label: "Requisitions", href: "/portal/inventory/requisitions", icon: ClipboardList },
-      { label: "Stock Movements", href: "/portal/inventory/movements", icon: BarChart3 },
-      { label: "Assets", href: "/portal/inventory/assets", icon: Shield },
+      { label: "Stock Items", href: "/portal/inventory/items", icon: Package, roles: ["super_admin", "school_admin", "inventory_officer", "accountant"] },
+      { label: "Requisitions", href: "/portal/inventory/requisitions", icon: ClipboardList, roles: ["super_admin", "school_admin", "inventory_officer", "accountant", "teacher", "non_teaching_staff"] },
+      { label: "Stock Movements", href: "/portal/inventory/movements", icon: BarChart3, roles: ["super_admin", "school_admin", "inventory_officer", "accountant"] },
+      { label: "Assets", href: "/portal/inventory/assets", icon: Shield, roles: ["super_admin", "school_admin", "inventory_officer", "accountant"] },
     ],
   },
   {
@@ -129,7 +129,7 @@ const sidebarItems: SidebarItem[] = [
     label: "Reports",
     href: "/portal/reports",
     icon: BarChart3,
-    roles: ["super_admin", "school_admin", "headteacher", "accountant"],
+    roles: ["super_admin", "school_admin", "headteacher", "accountant", "inventory_officer"],
   },
   {
     label: "Settings",
@@ -146,9 +146,16 @@ export function PortalShell({ user, children }: PortalShellProps) {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [profileOpen, setProfileOpen] = useState(false);
 
-  const filteredItems = sidebarItems.filter(
-    (item) => !item.roles || item.roles.some((role) => user.roles.includes(role as UserWithRoles["roles"][number]))
-  );
+  const filteredItems = sidebarItems
+    .filter(
+      (item) => !item.roles || item.roles.some((role) => user.roles.includes(role as UserWithRoles["roles"][number]))
+    )
+    .map((item) => ({
+      ...item,
+      children: item.children?.filter(
+        (child) => !child.roles || child.roles.some((role) => user.roles.includes(role as UserWithRoles["roles"][number]))
+      ),
+    }));
 
   const toggleExpand = (label: string) => {
     setExpandedItems((prev) =>

@@ -14,5 +14,5 @@ export default async function ChildDetailPage({
     notFound();
   }
 
-  return <StudentProfileView student={student} backUrl="/portal/children" />;
+  return <StudentProfileView student={student} backUrl="/portal/children" viewerRole="parent" />;
 }
