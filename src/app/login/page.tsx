@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -33,7 +33,7 @@ const demoAccounts: { role: UserRole; title: string; email: string; icon: React.
   { role: "non_teaching_staff", title: "Support Staff", email: "staff@framerelite.edu", icon: UserCheck, badge: "Staff Portal" },
 ];
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/portal";
@@ -296,3 +296,19 @@ export default function LoginPage() {
     </div>
   );
 }
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white gap-3">
+          <Loader2 className="w-8 h-8 text-primary-400 animate-spin" />
+          <p className="text-sm text-slate-400">Loading secure authentication portal...</p>
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
+  );
+}
+
