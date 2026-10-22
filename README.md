@@ -1,4 +1,4 @@
-# ShuleYetu — School Management Ecosystem
+# ShuleYetu  School Management Ecosystem
 
 > **Enterprise-grade, multi-tenant school operations platform with a luxury public website and cryptographically secured role-based administration portal.**
 
