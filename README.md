@@ -4,9 +4,9 @@
 
 ---
 
-## 🏛️ Executive Summary
+## Executive Summary
 
-**Framer Elite** is a production-oriented school management platform engineered for forward-thinking international schools, academies, and educational institutions. Built with the **Next.js App Router**, **TypeScript**, **Tailwind CSS**, and **PostgreSQL through Supabase**, it integrates institutional governance, academic planning, digital examination workflows, immutable inventory ledgers, and parent engagement into a single unified ecosystem.
+**ShuleYetu** is a production-oriented school management platform engineered for forward-thinking international schools, academies, and educational institutions. Built with the **Next.js App Router**, **TypeScript**, **Tailwind CSS**, and **PostgreSQL through Supabase**, it integrates institutional governance, academic planning, digital examination workflows, immutable inventory ledgers, and parent engagement into a single unified ecosystem.
 
 ---
 
