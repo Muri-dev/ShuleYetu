@@ -1,4 +1,4 @@
-# Framer Elite — School Management Ecosystem
+# ShuleYetu — School Management Ecosystem
 
 > **Enterprise-grade, multi-tenant school operations platform with a luxury public website and cryptographically secured role-based administration portal.**
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 🚀 Key Modules & Capabilities
+##  Key Modules & Capabilities
 
 ### 1. Luxury Public Website
 - **Branded Landing Page (`/`)**: Hero section, key metrics, academic pathways showcase, testimonials, and direct access portal gates.
@@ -66,7 +66,7 @@
 
 ---
 
-## 👥 Role-Based Access Control (RBAC)
+##  Role-Based Access Control (RBAC)
 
 Framer Elite enforces strict **server-side authorization** across 8 distinct institutional personas:
 
@@ -81,24 +81,7 @@ Framer Elite enforces strict **server-side authorization** across 8 distinct ins
 | **Non-Teaching Staff** | `30` | Profile management, departmental announcements, material requisitions |
 | **Parent / Guardian** | `20` | Linked children's published results, attendance records, school circulars |
 
----
-
-## 💻 Instant Demo Accounts
-
-You can test any role instantly using the **Role Switcher** widget in the portal header or the 1-click buttons on the Login page (`/login`):
-
-- **Super Admin**: `superadmin@framerelite.edu`
-- **School Admin**: `admin@framerelite.edu`
-- **Headteacher**: `headteacher@framerelite.edu`
-- **Teacher**: `teacher@framerelite.edu`
-- **Parent**: `parent@framerelite.edu`
-- **Inventory Officer**: `inventory@framerelite.edu`
-- **Accountant**: `accountant@framerelite.edu`
-- **Support Staff**: `staff@framerelite.edu`
-
----
-
-## 🛠️ Technology Stack & Architecture
+##  Technology Stack & Architecture
 
 - **Framework**: Next.js 15 (App Router, Server Components & Server Actions)
 - **Language**: TypeScript 5.7 (Strict mode)
@@ -111,7 +94,7 @@ You can test any role instantly using the **Role Switcher** widget in the portal
 
 ---
 
-## 📦 Database Setup & Migrations
+##  Database Setup & Migrations
 
 The database migration schema is available at `supabase/migrations/001_initial_schema.sql` (800+ lines covering all 25 tables, foreign keys, triggers, and RLS policies).
 
@@ -141,7 +124,7 @@ NEXT_PUBLIC_APP_NAME="Framer Elite Academy"
 
 ---
 
-## 🚀 Running Locally
+##  Running Locally
 
 1. Install dependencies:
    ```bash
